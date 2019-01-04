@@ -42,5 +42,11 @@ The above are basic kernels without using tiling. In the dir of *tiling*, we hav
 
 `$ ./tiling_gaussian ` (or other executable files)
 
+_Note_: 
+
+1. Before run '*tiling\_add*', run '*tiling\_alpha*' first.
+2. Before run '*non\_tiling\_add*', run '*non\_tiling\_alpha*' first.
+3. We put part of non_tiling kernels in *tiling* dir, mainly for comparison.
+
 
 Credits: OpenVX (https://www.khronos.org/openvx/)
