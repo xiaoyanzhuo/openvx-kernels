@@ -16,7 +16,7 @@
  */
 
 #include <VX/vx_khr_tiling.h>
-
+#include <stdio.h>
 /*! \file
  * \example vx_tiling_alpha.c
  */
@@ -40,6 +40,11 @@ void alpha_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     vx_tile_t *in = (vx_tile_t *)parameters[0];
     vx_float32 *alpha = (vx_float32 *)parameters[1];
     vx_tile_t *out = (vx_tile_t *)parameters[2];
+    
+    printf("TileHeight: %d \n", vxTileHeight(in, 0));
+    printf("TileWidth: %d \n", vxTileWidth(in, 0));
+    printf("TileBlockHeight: %d \n",vxTileBlockHeight(in));
+    printf("TileBlockWidth: %d \n",vxTileBlockWidth(in));
 
     for (j = 0u; j < vxTileHeight(in, 0); j+=vxTileBlockHeight(in))
     {
