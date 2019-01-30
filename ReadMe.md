@@ -48,5 +48,7 @@ _Note_:
 2. Before run '*non\_tiling\_add*', run '*non\_tiling\_alpha*' first.
 3. We put part of non_tiling kernels in *tiling* dir, mainly for comparison.
 4. If you want to change tile blocksize, you need to change the origin *vx\_tiling\_ext.c* file in 'openvx_sample'(what we built at the beginning) and then **rebuild** by using  (in /openvx\_sample/) `python Build.py --os=Linux --tiling --openmp --conf=Debug --rebuild=True --c=gcc --cpp=g++ ` 
+5. If you want to print out the block size, what we do now is add some printf lines in original tiling definition. You can use files in this repo: *vx\_tiling\_add.c, vx\_tiling\_alpha.c, vx\_tiling\_box.c, and vx\_tiling\_gaussian.c* (in /openvx-kernels/tiling/examples_tiling) to **replace** these files in /openvx\_sample/examples to **rebuild** the library of tiling. Same way to rebuild the openvx(`python Build.py --os=Linux --tiling --openmp --conf=Debug --rebuild=True --c=gcc --cpp=g++ `). You can do these steps(4&5) together and then rebuild together or rebuild separately. Btw, you can also back up files before being replaced if needed. 
+
 
 Credits: OpenVX (https://www.khronos.org/openvx/)
