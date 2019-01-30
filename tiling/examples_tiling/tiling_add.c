@@ -46,13 +46,13 @@ int main(int argc, char *argv[])
     vx_context context = vxCreateContext();
     if (vxGetStatus((vx_reference)context) == VX_SUCCESS)
     {
-        vx_rectangle_t rect = {1, 1, 513, 513}; // 512x512
+        vx_rectangle_t rect = {1, 1, 6401, 4801}; // 512x512
         vx_uint32 i = 0;
         vx_image images[] = {
-                vxCreateImage(context, 514, 514, VX_DF_IMAGE_U8), // 0:input
+                vxCreateImage(context, 6402, 4802, VX_DF_IMAGE_U8), // 0:input
                 vxCreateImageFromROI(images[0], &rect),       // 1:ROI input
-                vxCreateImage(context, 512, 512, VX_DF_IMAGE_U8), // 2:alpha
-                vxCreateImage(context, 512, 512, VX_DF_IMAGE_S16),// 3:add
+                vxCreateImage(context, 6400, 4800, VX_DF_IMAGE_U8), // 2:alpha
+                vxCreateImage(context, 6400, 4800, VX_DF_IMAGE_S16),// 3:add
         };
         vx_float32 a = 0.5f;
         vx_scalar alpha = vxCreateScalar(context, VX_TYPE_FLOAT32, &a);
@@ -64,10 +64,10 @@ int main(int argc, char *argv[])
             if (vxGetStatus((vx_reference)graph) == VX_SUCCESS)
             {
                 vx_node nodes[] = {
-                    vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
-                    vxFReadImageNode(graph, "tiling_alpha_lena_512x512.pgm", images[2]),
+                    vxFReadImageNode(graph, "bikegray_6400x4800.pgm", images[1]),
+                    vxFReadImageNode(graph, "tiling_alpha_bike_6400x4800.pgm", images[2]),
                     vxTilingAddNode(graph, images[1], images[2], images[3]),
-                    vxFWriteImageNode(graph, images[3], "tiling_add_lena_512x512.pgm"),
+                    vxFWriteImageNode(graph, images[3], "tiling_add_bike_6400x4800.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)
                 {
