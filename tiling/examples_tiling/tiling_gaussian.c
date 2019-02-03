@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "bikegray_6400x4800.pgm", images[1]),
                     vxTilingGaussianNode(graph, images[1], images[2]),
-                    vxFWriteImageNode(graph, images[2], "tiling_gauss_bike_6400x4800.pgm"),
+                    vxFWriteImageNode(graph, images[2], "tiling_gaussian_bike_6400x4800.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)
                 {
