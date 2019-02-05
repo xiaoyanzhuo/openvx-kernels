@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+#title          :run_kernels.sh
+#description    :This script is used to run openvx tiling and non_tiling kernels automatically, 
+#author         :Xiaoyan Zhuo <xiaoyanzhuo2@gmail.com>
+#create date    :2.2.19
+#latest update  :2.4.19
+#version        :1.1    
+#usage          :./run_kernels.sh <para1:file name to be executed> <para2: tile block size, like 4x4, 16x16, 128x128, etc>
+#=================================================================================
 
 name="_perf"
 file=$1
