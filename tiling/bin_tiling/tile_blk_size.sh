@@ -4,7 +4,7 @@
 #author         :Xiaoyan Zhuo <xiaoyanzhuo2@gmail.com>
 #date           :2.4.19
 #version        :1    
-#usage          :./python tile_blk_size.sh
+#usage          :./tile_blk_size.sh <tile_blk_size1> <tile_blk_size2> (./tile_blk_size.sh 4 4)
 #=================================================================================
 
 path_install="/home/firefly/build-openvx/openvx_sample/examples/"  # path need to be changed to where you build the openvx env
@@ -21,12 +21,8 @@ sed -i "287s/.*/          {$tile_blk_size_1, $tile_blk_size_2},/" vx_tiling_ext.
 sed -i "301s/.*/          {$tile_blk_size_1, $tile_blk_size_2},/" vx_tiling_ext.c  # line 301-add
 
 echo "Finish changing tile block size."
-echo "start recompling..."
+echo "Start recompling..."
 
-cd ..
 python Build.py --os=Linux --tiling --openmp --conf=Debug --rebuild=True --c=gcc --cpp=g++
 
 echo "Finish recompling."
-
-
-

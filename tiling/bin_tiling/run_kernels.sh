@@ -5,12 +5,14 @@
 #create date    :2.2.19
 #latest update  :2.4.19
 #version        :1.1    
-#usage          :./run_kernels.sh <para1:file name to be executed> <para2: tile block size, like 4x4, 16x16, 128x128, etc>
+#usage          :./run_kernels.sh <para1:file name to be executed> <para2: tile_blk_size1> <para3: tile_blk_size2>
 #=================================================================================
 
 name="_perf"
 file=$1
-tile_blk_size=$2
+tile_blk_size1=$2
+tile_blk_size2=$3
+tile_blk_size=$tile_blk_size1"x"$tile_blk_size2
 
 if [[ -n $(find . -name '*tiling*.pgm') ]]; then
         rm $1_*.pgm
@@ -28,10 +30,10 @@ function clean_cache()
         fincore --pages=false --summarize --only-cached * > cache.txt
         cat cache.txt
         list=$(cat cache.txt | grep "total cached size: 0")
-        echo "grep:"$list
-        if [[ -z $list ]]; then
-                echo "cache size is not 0 yet, cleaning..."
-        fi
+        # echo "grep:"$list
+        # if [[ -z $list ]]; then
+        #         echo "cache size is not 0 yet, cleaning..."
+        # fi
     done
 
     if [[ $list == $ref ]]; then
@@ -41,13 +43,10 @@ function clean_cache()
     fi
 }
 
-#name="_perf"
-#file=$1
-#tile_blk_size=$2
-
 if clean_cache; then
     echo "ready to run "$file
     echo "running "$file"..."
     perf stat -o "$file"$name"_"$tile_blk_size.txt -e cache-misses $file > "$file""_"$tile_blk_size.txt
     echo $file" done."
 fi
+
