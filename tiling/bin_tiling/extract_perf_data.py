@@ -5,7 +5,7 @@
 #author         :Xiaoyan Zhuo <xiaoyanzhuo2@gmail.com>
 #date           :2.2.19
 #version        :1    
-#usage          :./python extract_perf_data.py
+#usage          :python extract_perf_data.py (use python3 if needed)
 #=================================================================================
 
 import glob, os

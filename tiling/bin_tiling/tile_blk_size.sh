@@ -23,6 +23,13 @@ sed -i "301s/.*/          {$tile_blk_size_1, $tile_blk_size_2},/" vx_tiling_ext.
 echo "Finish changing tile block size."
 echo "Start recompling..."
 
+cd ..
 python Build.py --os=Linux --tiling --openmp --conf=Debug --rebuild=True --c=gcc --cpp=g++
 
-echo "Finish recompling."
+echo "Finish recompling openvx."
+
+path_kernels="/home/firefly/xyz/openvx-kernels/tiling" #path may vary, where you download the openvx_kernels repo.
+cd $path_kernels
+echo "Recompile kernels..."
+make
+echo "Finish recompiling, ready to run kernels."
