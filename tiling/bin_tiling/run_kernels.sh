@@ -25,10 +25,11 @@ function clean_cache()
     cat cache.txt
     ref="total cached size: 0"
     echo "ref:"$ref
+    echo "cleaning cache..."
     while [[ $list != $ref ]]; do
         sudo sh -c 'echo 1 >/proc/sys/vm/drop_caches'
         fincore --pages=false --summarize --only-cached * > cache.txt
-        cat cache.txt
+       # cat cache.txt
         list=$(cat cache.txt | grep "total cached size: 0")
         # echo "grep:"$list
         # if [[ -z $list ]]; then
