@@ -9,6 +9,8 @@
 #include <VX/vx_compatibility.h>
 #include <VX/vx_types.h>
 #include <assert.h>
+#define img_w
+#define img_h
 
 int main(int argc, char *argv[])
 {
@@ -16,12 +18,12 @@ int main(int argc, char *argv[])
     vx_context context = vxCreateContext();
     if (vxGetStatus((vx_reference)context) == VX_SUCCESS)
     {
-        vx_rectangle_t rect = {1, 1, 6401, 4801}; // 512x512
+        vx_rectangle_t rect = {1, 1, img_w+1, img_h+1}; // 512x512
         vx_uint32 i = 0;
         vx_image images[] = {
-                vxCreateImage(context, 6402, 4802, VX_DF_IMAGE_U8), // 0:input
+                vxCreateImage(context, img_w+2, img_h+2, VX_DF_IMAGE_U8), // 0:input
                 vxCreateImageFromROI(images[0], &rect),       // 1:ROI input
-                vxCreateImage(context, 6400, 4800, VX_DF_IMAGE_U8), // 2:gaussian
+                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8), // 2:gaussian
         };
         status |= vxLoadKernels(context, "openvx-debug");
         if (status == VX_SUCCESS)
@@ -30,9 +32,9 @@ int main(int argc, char *argv[])
             if (vxGetStatus((vx_reference)graph) == VX_SUCCESS)
             {
                 vx_node nodes[] = {
-                    vxFReadImageNode(graph, "bikegray_6400x4800.pgm", images[1]),
+                    vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
                     vxGaussian3x3Node(graph, images[1], images[2]),
-                    vxFWriteImageNode(graph, images[2], "non_tiling_gauss_bike_6400x4800.pgm"),
+                    vxFWriteImageNode(graph, images[2], "non_tiling_gauss_lena_512x512.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)
                 {
