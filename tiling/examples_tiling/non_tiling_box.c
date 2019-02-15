@@ -9,8 +9,8 @@
 #include <VX/vx_compatibility.h>
 #include <VX/vx_types.h>
 #include <assert.h>
-#define img_w
-#define img_h
+#define img_w 512
+#define img_h 512
 
 int main(int argc, char *argv[])
 {

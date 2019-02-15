@@ -21,8 +21,8 @@
 #include <VX/vx_lib_debug.h>
 #include <VX/vx_helper.h>
 #include "vx_tiling_ext.h"
-#define img_w
-#define img_h
+#define img_w 512
+#define img_h 512
 /*! \file
  * \brief An example of how to call the tiling nodes.
  * \example vx_tiling_main.c

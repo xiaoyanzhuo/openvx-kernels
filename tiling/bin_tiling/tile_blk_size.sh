@@ -21,9 +21,22 @@ sed -i "287s/.*/          {$tile_blk_size_1, $tile_blk_size_2},/" vx_tiling_ext.
 sed -i "301s/.*/          {$tile_blk_size_1, $tile_blk_size_2},/" vx_tiling_ext.c  # line 301-add
 
 echo "Finish changing tile block size."
+
+cd ../sample/targets/c_model/ #path to change block multiple 
+
+tile_blk_multiple=$3
+
+echo "Replacing tile block multiple with: ""$tile_blk_multiple"
+
+sed -i "429s/.*/    vx_uint32 block_multiple = $tile_blk_multiple;/" vx_interface.c # line 429 for block_multiple
+
+echo "Finished changing tile block multiple."
+
+
 echo "Start recompling..."
 
-cd ..
+cd ../../../ # go back to the path for rebuild openvx env
+
 python Build.py --os=Linux --tiling --openmp --conf=Debug --rebuild=True --c=gcc --cpp=g++
 
 echo "Finish recompling openvx."
