@@ -2,9 +2,10 @@
 #title          :tile_blk_size.sh
 #description    :This script is used to change the tile block size in vx_tiling_ext.c automatically and rebuild openvx env.
 #author         :Xiaoyan Zhuo <xiaoyanzhuo2@gmail.com>
-#date           :2.4.19
-#version        :1    
-#usage          :./tile_blk_size.sh <tile_blk_size1> <tile_blk_size2> (./tile_blk_size.sh 4 4)
+#create date    :2.4.19
+#lastest update :2.15.19
+#version        :1.1    
+#usage          :./tile_blk_size.sh <tile_blk_size1> <tile_blk_size2> <tile_blk_multiple> (./tile_blk_size.sh 4 4 32)
 #=================================================================================
 
 path_install="/home/firefly/build-openvx/openvx_sample/examples/"  # path need to be changed to where you build the openvx env
