@@ -363,6 +363,9 @@ VX_API_ENTRY vx_status VX_API_CALL vxPublishKernels(vx_context context)
                             tiling_kernels[k].parameters[p].data_type,
                             tiling_kernels[k].parameters[p].state);
             }
+           // status |= vxSetKernelAttribute(kernel, VX_KERNEL_ATTRIBUTE_INPUT_NEIGHBORHOOD, &tiling_kernels[k].nbhd, sizeof(vx_neighborhood_size_t));
+           // status |= vxSetKernelAttribute(kernel, VX_KERNEL_ATTRIBUTE_OUTPUT_TILE_BLOCK_SIZE, &tiling_kernels[k].block, sizeof(vx_tile_block_size_t));
+           // status |= vxSetKernelAttribute(kernel, VX_KERNEL_ATTRIBUTE_BORDER, &tiling_kernels[k].border, sizeof(vx_border_mode_t));
             status |= vxSetKernelAttribute(kernel, VX_KERNEL_INPUT_NEIGHBORHOOD, &tiling_kernels[k].nbhd, sizeof(vx_neighborhood_size_t));
             status |= vxSetKernelAttribute(kernel, VX_KERNEL_OUTPUT_TILE_BLOCK_SIZE, &tiling_kernels[k].block, sizeof(vx_tile_block_size_t));
             status |= vxSetKernelAttribute(kernel, VX_KERNEL_BORDER, &tiling_kernels[k].border, sizeof(vx_border_mode_t));
