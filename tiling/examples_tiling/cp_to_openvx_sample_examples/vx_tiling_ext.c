@@ -1,18 +1,24 @@
-/* 
-
- * Copyright (c) 2012-2017 The Khronos Group Inc.
+/*
+ * Copyright (c) 2013-2014 The Khronos Group Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and/or associated documentation files (the
+ * "Materials"), to deal in the Materials without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Materials, and to
+ * permit persons to whom the Materials are furnished to do so, subject to
+ * the following conditions:
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Materials.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  */
 
 #include <stdio.h>
@@ -39,11 +45,11 @@ static vx_status VX_CALLBACK vxFilterInputValidator(vx_node node, vx_uint32 inde
         if (param)
         {
             vx_image input = 0;
-            vxQueryParameter(param, VX_PARAMETER_REF, &input, sizeof(input));
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
             if (input)
             {
                 vx_df_image format = 0;
-                vxQueryImage(input, VX_IMAGE_FORMAT, &format, sizeof(format));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
                 if (format == VX_DF_IMAGE_U8)
                 {
                     status = VX_SUCCESS;
@@ -64,18 +70,18 @@ static vx_status VX_CALLBACK vxFilterOutputValidator(vx_node node, vx_uint32 ind
         if (param)
         {
             vx_image input = 0;
-            vxQueryParameter(param, VX_PARAMETER_REF, &input, sizeof(input));
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
             if (input)
             {
                 vx_uint32 width = 0, height = 0;
                 vx_df_image format = VX_DF_IMAGE_U8;
 
-                vxQueryImage(input, VX_IMAGE_WIDTH, &width, sizeof(width));
-                vxQueryImage(input, VX_IMAGE_HEIGHT, &height, sizeof(height));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
 
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_WIDTH, &width, sizeof(width));
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_HEIGHT, &height, sizeof(height));
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_FORMAT, &format, sizeof(format));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
 
                 vxReleaseImage(&input);
 
@@ -96,11 +102,11 @@ static vx_status VX_CALLBACK vxAddInputValidator(vx_node node, vx_uint32 index)
         if (param)
         {
             vx_image input = 0;
-            vxQueryParameter(param, VX_PARAMETER_REF, &input, sizeof(input));
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
             if (input)
             {
                 vx_df_image format = 0;
-                vxQueryImage(input, VX_IMAGE_FORMAT, &format, sizeof(format));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
                 if (format == VX_DF_IMAGE_U8)
                 {
                     status = VX_SUCCESS;
@@ -121,18 +127,18 @@ static vx_status VX_CALLBACK vxAddOutputValidator(vx_node node, vx_uint32 index,
         if (param)
         {
             vx_image input = 0;
-            vxQueryParameter(param, VX_PARAMETER_REF, &input, sizeof(input));
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
             if (input)
             {
                 vx_uint32 width = 0, height = 0;
                 vx_df_image format = VX_DF_IMAGE_S16;
 
-                vxQueryImage(input, VX_IMAGE_WIDTH, &width, sizeof(width));
-                vxQueryImage(input, VX_IMAGE_HEIGHT, &height, sizeof(height));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
 
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_WIDTH, &width, sizeof(width));
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_HEIGHT, &height, sizeof(height));
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_FORMAT, &format, sizeof(format));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
 
                 vxReleaseImage(&input);
 
@@ -153,11 +159,11 @@ static vx_status VX_CALLBACK vxAlphaInputValidator(vx_node node, vx_uint32 index
         if (param)
         {
             vx_image input = 0;
-            vxQueryParameter(param, VX_PARAMETER_REF, &input, sizeof(input));
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
             if (input)
             {
                 vx_df_image format = 0;
-                vxQueryImage(input, VX_IMAGE_FORMAT, &format, sizeof(format));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
                 if (format == VX_DF_IMAGE_U8)
                 {
                     status = VX_SUCCESS;
@@ -172,11 +178,11 @@ static vx_status VX_CALLBACK vxAlphaInputValidator(vx_node node, vx_uint32 index
         if (param)
         {
             vx_scalar scalar = 0;
-            vxQueryParameter(param, VX_PARAMETER_REF, &scalar, sizeof(scalar));
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &scalar, sizeof(scalar));
             if (scalar)
             {
                 vx_enum type = 0;
-                vxQueryScalar(scalar, VX_SCALAR_TYPE, &type, sizeof(type));
+                vxQueryScalar(scalar, VX_SCALAR_ATTRIBUTE_TYPE, &type, sizeof(type));
                 if (type == VX_TYPE_FLOAT32)
                 {
                     status = VX_SUCCESS;
@@ -197,18 +203,18 @@ static vx_status VX_CALLBACK vxAlphaOutputValidator(vx_node node, vx_uint32 inde
         if (param)
         {
             vx_image input = 0;
-            vxQueryParameter(param, VX_PARAMETER_REF, &input, sizeof(input));
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
             if (input)
             {
                 vx_uint32 width = 0, height = 0;
                 vx_df_image format = VX_DF_IMAGE_U8;
 
-                vxQueryImage(input, VX_IMAGE_WIDTH, &width, sizeof(width));
-                vxQueryImage(input, VX_IMAGE_HEIGHT, &height, sizeof(height));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
 
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_WIDTH, &width, sizeof(width));
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_HEIGHT, &height, sizeof(height));
-                vxSetMetaFormatAttribute(meta, VX_IMAGE_FORMAT, &format, sizeof(format));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
 
                 vxReleaseImage(&input);
 
@@ -244,7 +250,7 @@ typedef struct _vx_tiling_kernel_t {
     /*! neighborhood around block */
     vx_neighborhood_size_t nbhd;
     /*! border information. */
-    vx_border_t border;
+    vx_border_mode_t border;
 } vx_tiling_kernel_t;
 
 static vx_tiling_kernel_t tiling_kernels[] = {
@@ -302,6 +308,32 @@ static vx_tiling_kernel_t tiling_kernels[] = {
           {0, 0, 0, 0},
           {VX_BORDER_MODE_UNDEFINED, 0},
         },
+        {"org.khronos.openvx.tiling_erode_MxN",
+          VX_KERNEL_ERODE_MxN_TILING,
+          NULL,
+          erode_image_tiling,
+          2,
+          {{VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_OUTPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED}},
+          vxFilterInputValidator,
+          vxFilterOutputValidator,
+          {1, 1},
+          {-1, 1,-1, 1},
+          {VX_BORDER_MODE_UNDEFINED, 0},
+        },
+        {"org.khronos.openvx.tiling_dilate_MxN",
+          VX_KERNEL_DILATE_MxN_TILING,
+          NULL,
+          dilate_image_tiling,
+          2,
+          {{VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_OUTPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED}},
+          vxFilterInputValidator,
+          vxFilterOutputValidator,
+          {1, 1},
+          {-1, 1,-1, 1},
+          {VX_BORDER_MODE_UNDEFINED, 0},
+        },        
 };
 /*! [publish_support] */
 
@@ -331,9 +363,9 @@ VX_API_ENTRY vx_status VX_API_CALL vxPublishKernels(vx_context context)
                             tiling_kernels[k].parameters[p].data_type,
                             tiling_kernels[k].parameters[p].state);
             }
-            status |= vxSetKernelAttribute(kernel, VX_KERNEL_INPUT_NEIGHBORHOOD, &tiling_kernels[k].nbhd, sizeof(vx_neighborhood_size_t));
-            status |= vxSetKernelAttribute(kernel, VX_KERNEL_OUTPUT_TILE_BLOCK_SIZE, &tiling_kernels[k].block, sizeof(vx_tile_block_size_t));
-            status |= vxSetKernelAttribute(kernel, VX_KERNEL_BORDER, &tiling_kernels[k].border, sizeof(vx_border_t));
+            status |= vxSetKernelAttribute(kernel, VX_KERNEL_ATTRIBUTE_INPUT_NEIGHBORHOOD, &tiling_kernels[k].nbhd, sizeof(vx_neighborhood_size_t));
+            status |= vxSetKernelAttribute(kernel, VX_KERNEL_ATTRIBUTE_OUTPUT_TILE_BLOCK_SIZE, &tiling_kernels[k].block, sizeof(vx_tile_block_size_t));
+            status |= vxSetKernelAttribute(kernel, VX_KERNEL_ATTRIBUTE_BORDER, &tiling_kernels[k].border, sizeof(vx_border_mode_t));
             if (status != VX_SUCCESS)
             {
                 vxRemoveKernel(kernel);
@@ -352,3 +384,4 @@ VX_API_ENTRY vx_status VX_API_CALL vxPublishKernels(vx_context context)
     /*! [publish_function] */
     return status;
 }
+

@@ -1,5 +1,4 @@
 /*
-
  * Copyright (c) 2013-2017 The Khronos Group Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,46 +20,21 @@
 #include <VX/vx_lib_debug.h>
 #include <VX/vx_helper.h>
 #include "vx_tiling_ext.h"
-
+#define img_w 512
+#define img_h 512
 /*! \file
  * \brief An example of how to call the tiling nodes.
  * \example vx_tiling_main.c
  */
 
-vx_node vxTilingAddNode(vx_graph graph, vx_image in0, vx_image in1, vx_image out)
-{
-    vx_reference params[] = {
-        (vx_reference)in0,
-        (vx_reference)in1,
-        (vx_reference)out,
-    };
-    return vxCreateNodeByStructure(graph,
-                                    VX_KERNEL_ADD_TILING,
-                                    params,
-                                    dimof(params));
-}
-
-vx_node vxTilingAlphaNode(vx_graph graph, vx_image in, vx_scalar alpha, vx_image out)
-{
-    vx_reference params[] = {
-        (vx_reference)in,
-        (vx_reference)alpha,
-        (vx_reference)out,
-    };
-    return vxCreateNodeByStructure(graph,
-                                    VX_KERNEL_ALPHA_TILING,
-                                    params,
-                                    dimof(params));
-}
-
-vx_node vxTilingBoxNode(vx_graph graph, vx_image in, vx_image out, vx_uint32 width, vx_uint32 height)
+vx_node vxTilingErodeNode(vx_graph graph, vx_image in, vx_image out, vx_uint32 width, vx_uint32 height)
 {
     vx_reference params[] = {
         (vx_reference)in,
         (vx_reference)out,
     };
     vx_node node = vxCreateNodeByStructure(graph,
-                                    VX_KERNEL_BOX_MxN_TILING,
+                                    VX_KERNEL_ERODE_MxN_TILING,
                                     params,
                                     dimof(params));
     if (node && (width&1) && (height&1))
@@ -76,36 +50,20 @@ vx_node vxTilingBoxNode(vx_graph graph, vx_image in, vx_image out, vx_uint32 wid
     return node;
 }
 
-vx_node vxTilingGaussianNode(vx_graph graph, vx_image in, vx_image out)
-{
-    vx_reference params[] = {
-        (vx_reference)in,
-        (vx_reference)out,
-    };
-    return vxCreateNodeByStructure(graph,
-                                    VX_KERNEL_GAUSSIAN_3x3_TILING,
-                                    params,
-                                    dimof(params));
-}
-
 int main(int argc, char *argv[])
 {
     vx_status status = VX_SUCCESS;
     vx_context context = vxCreateContext();
     if (vxGetStatus((vx_reference)context) == VX_SUCCESS)
     {
-        vx_rectangle_t rect = {1, 1, 513, 513}; // 512x512
+        vx_rectangle_t rect = {1, 1, img_w+1, img_h+1}; // 512x512
         vx_uint32 i = 0;
         vx_image images[] = {
-                vxCreateImage(context, 514, 514, VX_DF_IMAGE_U8), // 0:input
+                vxCreateImage(context, img_w+2, img_h+2, VX_DF_IMAGE_U8), // 0:input
                 vxCreateImageFromROI(images[0], &rect),       // 1:ROI input
-                vxCreateImage(context, 512, 512, VX_DF_IMAGE_U8), // 2:box
-                vxCreateImage(context, 512, 512, VX_DF_IMAGE_U8), // 3:gaussian
-                vxCreateImage(context, 512, 512, VX_DF_IMAGE_U8), // 4:alpha
-                vxCreateImage(context, 512, 512, VX_DF_IMAGE_S16),// 5:add
+                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8), // 2:erode
         };
-        vx_float32 a = 0.5f;
-        vx_scalar alpha = vxCreateScalar(context, VX_TYPE_FLOAT32, &a);
+
         status |= vxLoadKernels(context, "openvx-tiling");
         status |= vxLoadKernels(context, "openvx-debug");
         if (status == VX_SUCCESS)
@@ -115,14 +73,8 @@ int main(int argc, char *argv[])
             {
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
-                    vxTilingBoxNode(graph, images[1], images[2], 5, 5),
-                    vxFWriteImageNode(graph, images[2], "ot_box_lena_512x512.pgm"),
-                    vxTilingGaussianNode(graph, images[1], images[3]),
-                    vxFWriteImageNode(graph, images[3], "ot_gauss_lena_512x512.pgm"),
-                    vxTilingAlphaNode(graph, images[1], alpha, images[4]),
-                    vxFWriteImageNode(graph, images[4], "ot_alpha_lena_512x512.pgm"),
-                    vxTilingAddNode(graph, images[1], images[4], images[5]),
-                    vxFWriteImageNode(graph, images[5], "ot_add_lena_512x512.pgm"),
+                    vxTilingErodeNode(graph, images[1], images[2], 3, 3),
+                    vxFWriteImageNode(graph, images[2], "tiling_erode_lena_512x512.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)
                 {
@@ -148,8 +100,8 @@ int main(int argc, char *argv[])
                 vxReleaseGraph(&graph);
             }
         }
-        status |= vxUnloadKernels(context, "openvx-debug");
-        status |= vxUnloadKernels(context, "openvx-tiling");
+        // status |= vxUnloadKernels(context, "openvx-debug");
+        // status |= vxUnloadKernels(context, "openvx-tiling");
         for (i = 0; i < dimof(images); i++)
         {
             vxReleaseImage(&images[i]);
@@ -159,3 +111,4 @@ int main(int argc, char *argv[])
     printf("%s::main() returns = %d\n", argv[0], status);
     return (int)status;
 }
+
