@@ -74,5 +74,7 @@ df_time.set_index('app', inplace=True)
 df_time = df_time.sort_index(axis=1)    # sort by cols name
 df_cache = df_cache.sort_index(axis=1)
 
-df_time.to_csv("exec_time_%s_%s.csv" %(str(sys.argv[1]), str(sys.argv[2])))
-df_cache.to_csv("cache_miss_%s_%s.csv" %(str(sys.argv[1]), str(sys.argv[2])))
+img_name = str(sys.argv[1]).split('.')[0]
+tile_h = str(sys.argv[2])
+df_time.to_csv("exec_time_%s_%s.csv" %(img_name, tile_h))
+df_cache.to_csv("cache_miss_%s_%s.csv" %(img_name, tile_h))
