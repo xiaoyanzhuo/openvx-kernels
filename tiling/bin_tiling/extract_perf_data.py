@@ -19,9 +19,15 @@ def perf_values(file):
         lines = in_file.readlines()      
     for line in lines:
         if "cache-misses" in line:
-            cache_miss = int(line.split()[0])
+            if ',' in line.split()[0]:  # for number using thousand seperator ','
+                cache_miss = int(line.split()[0].replace(',', ''))
+            else:
+                cache_miss = int(line.split()[0])
         if "seconds time elapsed" in line:
-            exec_time = float(line.split()[0])
+            if ',' in line.split()[0]:
+                exec_time = float(line.split()[0].replace(',', ''))
+            else:
+                exec_time = float(line.split()[0])
     return cache_miss, exec_time
 
 # get kernel list
