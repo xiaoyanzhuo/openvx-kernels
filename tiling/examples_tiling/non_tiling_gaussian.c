@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
                     vxGaussian3x3Node(graph, images[1], images[2]),
-                    vxFWriteImageNode(graph, images[2], "non_tiling_gauss_lena_512x512.pgm"),
+                    vxFWriteImageNode(graph, images[2], "non_tiling_gaussian_lena_512x512.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)
                 {
