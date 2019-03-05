@@ -3,12 +3,14 @@
 #description    :This script takes all perf output data (.txt files) in one directory with cache-miss and execution time information
 #                and output will contain cache-miss.csv and exec_time.csv.
 #author         :Xiaoyan Zhuo <xiaoyanzhuo2@gmail.com>
-#date           :2.2.19
-#version        :1    
-#usage          :python extract_perf_data.py (use python3 if needed)
-#=================================================================================
+#create date    :2.2.19
+#latest update  :3.1.19
+#version        :1.1    
+#usage          :python extract_perf_data.py <image_filename> <tile height>  (use python3 if needed)
+#example        :python extract_perf_data.py lena_512x512 8 (using lena512x512 and tile height is 8)
+#===================================================================================================
 
-import glob, os
+import glob, os, sys
 import pandas as pd
 
 # extract cache-miss and run time from perf output
@@ -17,9 +19,15 @@ def perf_values(file):
         lines = in_file.readlines()      
     for line in lines:
         if "cache-misses" in line:
-            cache_miss = int(line.split()[0])
+            if ',' in line.split()[0]:  # for number using thousand seperator ','
+                cache_miss = int(line.split()[0].replace(',', ''))
+            else:
+                cache_miss = int(line.split()[0])
         if "seconds time elapsed" in line:
-            exec_time = float(line.split()[0])
+            if ',' in line.split()[0]:
+                exec_time = float(line.split()[0].replace(',', ''))
+            else:
+                exec_time = float(line.split()[0])
     return cache_miss, exec_time
 
 # get kernel list
@@ -66,5 +74,7 @@ df_time.set_index('app', inplace=True)
 df_time = df_time.sort_index(axis=1)    # sort by cols name
 df_cache = df_cache.sort_index(axis=1)
 
-df_time.to_csv('exec_time.csv')
-df_cache.to_csv('cache_miss.csv')
+img_name = str(sys.argv[1]).split('.')[0]
+tile_h = str(sys.argv[2])
+df_time.to_csv("exec_time_%s_%s.csv" %(img_name, tile_h))
+df_cache.to_csv("cache_miss_%s_%s.csv" %(img_name, tile_h))
