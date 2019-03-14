@@ -3,7 +3,7 @@
 #description    :This script is used to run openvx tiling and non_tiling kernels automatically, 
 #author         :Xiaoyan Zhuo <xiaoyanzhuo2@gmail.com>
 #create date    :2.2.19
-#latest update  :2.4.19
+#latest update  :13.3.19
 #version        :1.1    
 #usage          :./run_kernels.sh <para1:file name to be executed> <para2: tile_blk_size1> <para3: tile_blk_size2>
 #=================================================================================
@@ -19,35 +19,9 @@ if [[ -n $(find . -name '*tiling*.pgm') ]]; then
         echo "clean pgm files from previous output"
 fi
 
-function clean_cache()
-{
-    fincore --pages=false --summarize --only-cached * > cache.txt
-    cat cache.txt
-    ref="total cached size: 0"
-    echo "ref:"$ref
-    echo "cleaning cache..."
-    while [[ $list != $ref ]]; do
-        sudo sh -c 'echo 1 >/proc/sys/vm/drop_caches'
-        fincore --pages=false --summarize --only-cached * > cache.txt
-       # cat cache.txt
-        list=$(cat cache.txt | grep "total cached size: 0")
-        # echo "grep:"$list
-        # if [[ -z $list ]]; then
-        #         echo "cache size is not 0 yet, cleaning..."
-        # fi
-    done
+sudo sh -c 'echo 1 >/proc/sys/vm/drop_caches'
 
-    if [[ $list == $ref ]]; then
-            echo "cache is clear."
-            cat cache.txt  #for debugging
-            return 0
-    fi
-}
-
-if clean_cache; then
-    echo "ready to run "$file
-    echo "running "$file"..."
-    perf stat -o "$file"$name"_"$tile_blk_size.txt -e cache-misses $file > "$file""_"$tile_blk_size.txt
-    echo $file" done."
-fi
-
+echo "running "$file"..."
+# perf stat -o "$file"$name"_"$tile_blk_size.txt -e cache-misses $file > "$file""_"$tile_blk_size.txt
+perf stat -o "$file"$name"_"$tile_blk_size.txt -e instructions,cpu-cycles,cache-references,cache-misses,L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-prefetches,L1-dcache-prefetch-misses,L1-icache-loads,L1-icache-load-misses,L1-icache-prefetches,L1-icache-prefetch-misses $file > "$file""_"$tile_blk_size.txt
+echo $file" done."

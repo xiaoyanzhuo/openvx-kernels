@@ -17,7 +17,6 @@ max_tiling_size = 2048
 for image in images:
     image_width = int(find_between(image, "_", "x"))
     image_height = int(find_between(image, "x", "."))
-    image_name = str(image).split('.')[0]   
     subprocess.call("./change_image.sh {} {} {}".format(image, image_width, image_height), shell=True)
     tile_height = 1
     while tile_height < max_tile_height + 1:
@@ -30,8 +29,4 @@ for image in images:
                 subprocess.call("./run_kernels.sh ./{} {} {}".format(kernel, t_size, t_size), shell=True, executable='/bin/bash')
             t_size *= 2
         subprocess.call("python3 extract_perf_data.py {} {}".format(image, tile_height), shell=True)
-        subprocess.call("mkdir csv_{}_{}".format(image_name, tile_height), shell=True)    # more than 10 types of perf data
-        subprocess.call("mv *.csv csv_{}_{}/".format(image_name, tile_height), shell=True) 
-        subprocess.call("mkdir txt_{}_{}".format(image_name, tile_height), shell=True)  # txt files as backup
-        subprocess.call("mv *.txt txt_{}_{}/".format(image_name, tile_height), shell=True)
         tile_height *= 2
