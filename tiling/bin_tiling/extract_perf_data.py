@@ -64,7 +64,7 @@ def perf_values(file):
             if ',' in line.split()[0]:  # for number using thousand seperator ','
                 L1d_load_miss = int(line.split()[0].replace(',', ''))
             if '<not' in line.split()[0]:
-                L1i_load_miss = None
+                L1d_load_miss = None
             else:
                 L1d_load_miss = int(line.split()[0])
         if "L1-dcache-stores" in line:
