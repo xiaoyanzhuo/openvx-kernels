@@ -58,9 +58,9 @@ void dilate_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
             //vx_uint32 min = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1);
             vx_uint32 max = vxImagePixel(vx_uint8, in, 0, x, y, vxNeighborhoodLeft(in), vxNeighborhoodTop(in));
             /* these loops can handle 3x3, 5x5, etc. since block size would be 1x1 */
-            for (j = vxNeighborhoodTop(in); j < vxNeighborhoodBottom(in); j++)
+            for (j = vxNeighborhoodTop(in); j <= vxNeighborhoodBottom(in); j++)
             {
-                for (i = vxNeighborhoodLeft(in); i < vxNeighborhoodRight(in); i++)
+                for (i = vxNeighborhoodLeft(in); i <= vxNeighborhoodRight(in); i++)
                 {
                     if (vxImagePixel(vx_uint8, in, 0, x, y, i, j) > max)
                         max = vxImagePixel(vx_uint8, in, 0, x, y, i, j);

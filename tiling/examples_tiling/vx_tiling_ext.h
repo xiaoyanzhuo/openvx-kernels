@@ -38,6 +38,12 @@ enum vx_tiling_kernels_e {
     VX_KERNEL_ERODE_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x104,
     /*! \brief a dilate kernel */
     VX_KERNEL_DILATE_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x105,
+    /*! \brief a median kernel */
+    VX_KERNEL_MEDIAN_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x106,
+    /*! \brief a sobel kernel */
+    VX_KERNEL_SOBEL_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x107,
+    /*! \brief a absdiff kernel */
+    VX_KERNEL_ABSDIFF_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x108,
 };
 
 #ifdef _VX_TILING_EXT_INTERNAL_
@@ -47,6 +53,9 @@ void box_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_REST
 void gaussian_image_tiling_fast(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 void erode_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 void dilate_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void median_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void sobel_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void absdiff_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 #endif
 
 #endif

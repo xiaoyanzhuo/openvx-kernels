@@ -22,13 +22,14 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <VX/vx_khr_tiling.h>
 
 /*! \file
- * \example vx_tiling_erode.c
+ * \example vx_tiling_median.c
  */
 
-/*! \brief A 3x3 to 1x1 erode filter
+/*! \brief A 3x3 to 1x1 median filter
  * This kernel uses this tiling definition.
  * \code
  * vx_block_size_t outSize = {1,1};
@@ -36,8 +37,20 @@
  * \endcode
  * \ingroup group_tiling
  */
-//! [erode_tiling_function]
-void erode_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
+//! [median_tiling_function]
+static int vx_uint8_compare(const void *p1, const void *p2)
+{
+    vx_uint8 a = *(vx_uint8 *)p1;
+    vx_uint8 b = *(vx_uint8 *)p2;
+    if (a > b)
+        return 1;
+    else if (a == b)
+        return 0;
+    else
+        return -1;
+}
+
+void median_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                       void * VX_RESTRICT tile_memory,
                       vx_size tile_memory_size)
 {
@@ -49,36 +62,43 @@ void erode_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     printf("TileWidth: %d \n", vxTileWidth(out,0));
     printf("TileBlockHeight: %d \n",vxTileBlockHeight(out));
     printf("TileBlockWidth: %d \n",vxTileBlockWidth(out));
-/*
-    printf("vxNeighborhoodTop: %d \n",vxNeighborhoodTop(in));
-    printf("vxNeighborhoodBottom: %d \n",vxNeighborhoodBottom(in));
-    printf("vxNeighborhoodLeft: %d \n",vxNeighborhoodLeft(in));
-    printf("vxNeighborhoodRight: %d \n",vxNeighborhoodRight(in));
-*/    
 
     for (y = 0; y < vxTileHeight(out, 0); y+=vxTileBlockHeight(out))
     {
         for (x = 0; x < vxTileWidth(out, 0); x+=vxTileBlockWidth(out))
         {
             vx_int32 j, i;
-            //vx_uint32 min = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1);
-            vx_uint32 min = vxImagePixel(vx_uint8, in, 0, x, y, vxNeighborhoodLeft(in), vxNeighborhoodTop(in));
+            vx_uint8 values[9];
+            vx_uint8 row_len, row_shift, col_shift, v_index, nitems;
+            nitems = sizeof(values)/sizeof(values[0]);
+            values[0] = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1);
+            values[1] = vxImagePixel(vx_uint8, in, 0, x, y,  0, -1);
+            values[2] = vxImagePixel(vx_uint8, in, 0, x, y, +1, -1);
+            values[3] = vxImagePixel(vx_uint8, in, 0, x, y, -1,  0);
+            values[4] = vxImagePixel(vx_uint8, in, 0, x, y,  0,  0);
+            values[5] = vxImagePixel(vx_uint8, in, 0, x, y, +1,  0);
+            values[6] = vxImagePixel(vx_uint8, in, 0, x, y, -1, +1);
+            values[7] = vxImagePixel(vx_uint8, in, 0, x, y,  0, +1);
+            values[8] = vxImagePixel(vx_uint8, in, 0, x, y, +1, +1);
+
+/*
+            row_len = vxNeighborhoodRight(in) - vxNeighborhoodLeft(in) + 1;
+            row_shift = 0 - vxNeighborhoodLeft(in);
+            col_shift = 0 - vxNeighborhoodTop(in);
+*/
             /* these loops can handle 3x3, 5x5, etc. since block size would be 1x1 */
-            //vx_uint8 count = 0;
-            for (j = vxNeighborhoodTop(in); j <= vxNeighborhoodBottom(in); j++)
+/*            for (j = vxNeighborhoodTop(in); j < vxNeighborhoodBottom(in); j++)
             {
-                for (i = vxNeighborhoodLeft(in); i <= vxNeighborhoodRight(in); i++)
+                for (i = vxNeighborhoodLeft(in); i < vxNeighborhoodRight(in); i++)
                 {
-                    if (vxImagePixel(vx_uint8, in, 0, x, y, i, j) < min)
-                        min = vxImagePixel(vx_uint8, in, 0, x, y, i, j);
-                    //count++;
+                    v_index = (i + row_shift) + row_len * (j + col_shift);
+                    values[v_index]= vxImagePixel(vx_uint8, in, 0, x, y, i, j);
                 }
             }
-            //printf("loop counter: %d \n",count);
-            vxImagePixel(vx_uint8, out, 0, x, y, 0, 0) = (vx_uint8)min;
+*/
+            qsort(values, nitems, sizeof(vx_uint8), vx_uint8_compare);
+            vxImagePixel(vx_uint8, out, 0, x, y, 0, 0) = values[4];  /* pick the middle value */
         }
     }
 }
-//! [erode_tiling_function]
-
-
+//! [median_tiling_function]
