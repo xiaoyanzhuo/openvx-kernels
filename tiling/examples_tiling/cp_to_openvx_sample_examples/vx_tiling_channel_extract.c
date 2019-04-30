@@ -29,6 +29,7 @@
  * \example vx_tiling_channel_extract.c
  */
 
+// Not sure how passing arguments here should be modified if needed for tiling. Everything that returned something is now void to just perform the algorithm.
 void vxCopyPlaneToImage(vx_image src,
                         vx_uint32 src_plane,
                         vx_uint8 src_component,
@@ -72,7 +73,6 @@ void vxCopyPlaneToImage(vx_image src,
         }
         vxCommitImagePatch(src, NULL, src_plane, &src_addr, src_base);
     }
-    return status;
 }
 
 void channel_extract_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
@@ -96,7 +96,7 @@ void channel_extract_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
             vx_enum chan = -1;
             vx_df_image format = 0;
             vx_uint32 cidx = 0;
-            vx_status status = VX_ERROR_INVALID_PARAMETERS;
+            //vx_status status = VX_ERROR_INVALID_PARAMETERS;
 
             vxAccessScalarValue((*channel), &chan); // Access channel similar to vx_tiling_alpha for accessing vx_float32 *alpha argument (does not use vxImagePixel for non-image arguments)
             vxQueryImage(vxImagePixel(uint8, in, 0, i, j, 0, 0), VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
