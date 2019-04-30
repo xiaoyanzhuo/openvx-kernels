@@ -43,7 +43,17 @@ enum vx_tiling_kernels_e {
     /*! \brief a sobel kernel */
     VX_KERNEL_SOBEL_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x107,
     /*! \brief a absdiff kernel */
-    VX_KERNEL_ABSDIFF_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x108,
+    VX_KERNEL_ABSDIFF_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x108, // Add MXN here for uniformity
+    /*! \brief a magnitude kernel */
+    VX_KERNEL_MAGNITUDE_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x109,
+    /*! \brief a phase kernel */
+    VX_KERNEL_PHASE_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10A,
+    /*! \brief a color convert kernel */
+    VX_KERNEL_COLOR_CONVERT_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10B,
+    /*! \brief a channel extract kernel */
+    VX_KERNEL_CHANNEL_EXTRACT_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10C,
+    /*! \brief a channel combine kernel */
+    VX_KERNEL_CHANNEL_COMBINE_MxN_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10D,
 };
 
 #ifdef _VX_TILING_EXT_INTERNAL_
@@ -56,6 +66,11 @@ void dilate_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_R
 void median_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 void sobel_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 void absdiff_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void magnitude_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void phase_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void color_convert_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void channel_extract_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void channel_combine_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 #endif
 
 #endif

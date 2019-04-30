@@ -310,6 +310,87 @@ static vx_status VX_CALLBACK vxSobelOutputValidator(vx_node node, vx_uint32 inde
     return status;
 }
 
+static vx_status VX_CALLBACK vxMagnitudeInputValidator(vx_node node, vx_uint32 index)
+{
+    vx_status status = VX_ERROR_INVALID_PARAMETERS;
+    if ((index == 0) || (index == 1))
+    {
+        vx_parameter param = vxGetParameterByIndex(node, index);
+        if (param)
+        {
+            vx_image input = 0;
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
+            if (input)
+            {
+                vx_df_image format = 0;
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
+                if (format == VX_DF_IMAGE_S16)
+                {
+                    status = VX_SUCCESS;
+                }
+            }
+            vxReleaseParameter(&param);
+        }
+    }
+    return status;
+}
+
+static vx_status VX_CALLBACK vxPhaseInputValidator(vx_node node, vx_uint32 index) // SOMEHOW NEED TO VALIDATE FLOAT64 TYPE LIKE ALPHA HERE
+{
+    vx_status status = VX_ERROR_INVALID_PARAMETERS;
+    if ((index == 0) || (index == 1))
+    {
+        vx_parameter param = vxGetParameterByIndex(node, index);
+        if (param)
+        {
+            vx_image input = 0;
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
+            if (input)
+            {
+                vx_df_image format = 0;
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
+                if (format == VX_DF_IMAGE_S16)
+                {
+                    status = VX_SUCCESS;
+                }
+            }
+            vxReleaseParameter(&param);
+        }
+    }
+    return status;
+}
+
+static vx_status VX_CALLBACK vxMagnitudeOutputValidator(vx_node node, vx_uint32 index, vx_meta_format meta)
+{
+    vx_status status = VX_ERROR_INVALID_PARAMETERS;
+    if (index == 2)
+    {
+        vx_parameter param = vxGetParameterByIndex(node, 0); /* we reference an input image */
+        if (param)
+        {
+            vx_image input = 0;
+            vxQueryParameter(param, VX_PARAMETER_ATTRIBUTE_REF, &input, sizeof(input));
+            if (input)
+            {
+                vx_uint32 width = 0, height = 0;
+                vx_df_image format = VX_DF_IMAGE_U8;
+
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxQueryImage(input, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
+
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_WIDTH, &width, sizeof(width));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_HEIGHT, &height, sizeof(height));
+                vxSetMetaFormatAttribute(meta, VX_IMAGE_ATTRIBUTE_FORMAT, &format, sizeof(format));
+
+                vxReleaseImage(&input);
+
+                status = VX_SUCCESS;
+            }
+            vxReleaseParameter(&param);
+        }
+    }
+}
+
 /*! [publish_support] */
 typedef struct _vx_tiling_kernel_t {
     /*! kernel name */
@@ -445,7 +526,7 @@ static vx_tiling_kernel_t tiling_kernels[] = {
           {VX_BORDER_MODE_UNDEFINED, 0},
         },
         {"org.khronos.openvx.tiling_absdiff",
-          VX_KERNEL_ABSDIFF_TILING,
+          VX_KERNEL_ABSDIFF_TILING, // ADD MXN in name here to keep it uniform
           NULL,
           absdiff_image_tiling,
           3,
@@ -457,7 +538,78 @@ static vx_tiling_kernel_t tiling_kernels[] = {
           {1, 1},
           {0, 0, 0, 0},
           {VX_BORDER_MODE_UNDEFINED, 0},
-        },          
+        },   
+        {"org.khronos.openvx.tiling_magnitude",
+          VX_KERNEL_MAGNITUDE_MxN_TILING,
+          NULL,
+          magnitude_image_tiling,
+          3,
+          {{VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_OUTPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED}},
+          vxMagnitudeInputValidator,
+          vxMagnitudeOutputValidator,
+          {1, 1},
+          {0, 0, 0, 0},
+          {VX_BORDER_MODE_UNDEFINED, 0},
+        },  
+        {"org.khronos.openvx.tiling_phase",
+          VX_KERNEL_PHASE_MxN_TILING,
+          NULL,
+          phase_image_tiling,
+          3,
+          {{VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_OUTPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED}},
+          vxPhaseInputValidator,
+          vxMagnitudeOutputValidator,
+          {1, 1},
+          {0, 0, 0, 0},
+          {VX_BORDER_MODE_UNDEFINED, 0},
+        }, 
+        {"org.khronos.openvx.tiling_color_convert",
+          VX_KERNEL_COLOR_CONVERT_MxN_TILING,
+          NULL,
+          color_convert_image_tiling,
+          3,
+          {{VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_OUTPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED}},
+          vxSobelInputValidator, // Check UINT8 (verify)
+          vxMagnitudeOutputValidator, // Check UINT8 (verify)
+          {1, 1},
+          {0, 0, 0, 0},
+          {VX_BORDER_MODE_UNDEFINED, 0},
+        },
+        {"org.khronos.openvx.tiling_channel_extract",
+          VX_KERNEL_CHANNEL_EXTRACT_MxN_TILING,
+          NULL,
+          channel_extract_image_tiling,
+          3,
+          {{VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_INPUT, VX_TYPE_SCALAR, VX_PARAMETER_STATE_REQUIRED},
+           {VX_OUTPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED}},
+          vxAlphaInputValidator, // Similar to alpha with an image and scalar (alpha has a float argument; channel extract and combine has vx_scalar argument) parameter checked
+          vxAlphaOutputValidator, // Similar to alpha with an RGB image and scalar (alpha has a float argument; channel extract and combine has vx_scalar argument) parameter checked
+          {1, 1},
+          {0, 0, 0, 0},
+          {VX_BORDER_MODE_UNDEFINED, 0},
+        },
+        {"org.khronos.openvx.tiling_channel_combine",
+          VX_KERNEL_CHANNEL_COMBINE_MxN_TILING,
+          NULL,
+          channel_combine_image_tiling,
+          3,
+          {{VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_INPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED},
+           {VX_OUTPUT, VX_TYPE_IMAGE, VX_PARAMETER_STATE_REQUIRED}},
+          vxSobelInputValidator, // Check UINT8 (verify since there's more than one input image now (4 total)) 
+          vxSobelOutputValidator, // Check UINT8/RGB (verify since there's more than one input image now (4 total))
+          {1, 1},
+          {0, 0, 0, 0},
+          {VX_BORDER_MODE_UNDEFINED, 0},
+        },    
 };
 /*! [publish_support] */
 
