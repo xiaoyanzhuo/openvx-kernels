@@ -22,11 +22,11 @@ int main(int argc, char *argv[])
         vx_uint32 i = 0;
         vx_image images[] = {
                 vxCreateImage(context, img_w+2, img_h+2, VX_DF_IMAGE_U8), // 0:input
-                vxCreateImageFromROI(images[0], &rect),       // 1:ROI input
-                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8), // 2:alpha
+                vxCreateImageFromROI(images[0], &rect),       // 1:ROI input0
+                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8), // 2:input1
+                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8),// 3:absdiff
         };
-        vx_float32 a = 0.3f;
-        vx_scalar alpha = vxCreateScalar(context, VX_TYPE_FLOAT32, &a);
+        vx_enum policy = VX_CONVERT_POLICY_SATURATE;
         status |= vxLoadKernels(context, "openvx-debug");
         if (status == VX_SUCCESS)
         {
@@ -35,8 +35,9 @@ int main(int argc, char *argv[])
             {
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
-                    vxAccumulateWeightedImageNode(graph, images[1], alpha, images[2]),
-                    vxFWriteImageNode(graph, images[2], "non_tiling_alpha_lena_512x512.pgm"),
+                    vxFReadImageNode(graph, "non_tiling_alpha_lena_512x512.pgm", images[2]),
+                    vxSubtractNode(graph, images[1], images[2], policy, images[3]),
+                    vxFWriteImageNode(graph, images[3], "non_tiling_sub_lena_512x512.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)
                 {

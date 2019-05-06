@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
                     vxFReadImageNode(graph, "non_tiling_alpha_lena_512x512.pgm", images[2]),
-                    vxAbsDiffNode(graph, images[1], images[2], images[3]),
+                    vxAbsDiffNode(graph, images[2], images[1], images[3]),
                     vxFWriteImageNode(graph, images[3], "non_tiling_absdiff_lena_512x512.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)

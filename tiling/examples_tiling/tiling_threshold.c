@@ -40,7 +40,8 @@ vx_node vxTilingSobelNode(vx_graph graph, vx_image in, vx_image out0, vx_image o
                                     dimof(params));
     return node;
 }
-vx_node vxTilingPhaseNode(vx_graph graph, vx_image in0, vx_image in1, vx_image out)
+
+vx_node vxTilingMagnitudeNode(vx_graph graph, vx_image in0, vx_image in1, vx_image out)
 {
     vx_reference params[] = {
         (vx_reference)in0,
@@ -48,11 +49,25 @@ vx_node vxTilingPhaseNode(vx_graph graph, vx_image in0, vx_image in1, vx_image o
         (vx_reference)out,
     };
     vx_node node = vxCreateNodeByStructure(graph,
-                                    VX_KERNEL_PHASE_TILING,
+                                    VX_KERNEL_MAGNITUDE_MxN_TILING,
                                     params,
                                     dimof(params));
     return node;
 }
+
+vx_node vxTilingThresholdNode(vx_graph graph, vx_image in, vx_scalar threshold, vx_image out)
+{
+    vx_reference params[] = {
+        (vx_reference)in,
+        (vx_reference)threshold,
+        (vx_reference)out,
+    };
+    return vxCreateNodeByStructure(graph,
+                                    VX_KERNEL_THRESHOLD_TILING,
+                                    params,
+                                    dimof(params));
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -68,11 +83,11 @@ int main(int argc, char *argv[])
                 vxCreateImageFromROI(images[0], &rect),       // 1:ROI input
                 vxCreateVirtualImage(graph, 0, 0, VX_DF_IMAGE_S16),  // 2:grad_x
                 vxCreateVirtualImage(graph, 0, 0, VX_DF_IMAGE_S16),  // 3:grad_y
-//                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_S16), // 2:grad_x
-//                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_S16), // 3:grad_y
-                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8), // 4:phase 
+                vxCreateVirtualImage(graph, 0, 0, VX_DF_IMAGE_S16), // 4:magnitude
+                vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8),   // 5: threshold
         };
-
+        vx_uint8 th = 40;
+        vx_scalar threshold = vxCreateScalar(context, VX_TYPE_UINT8, &th);
         status |= vxLoadKernels(context, "openvx-tiling");
         status |= vxLoadKernels(context, "openvx-debug");
         if (status == VX_SUCCESS)
@@ -83,10 +98,9 @@ int main(int argc, char *argv[])
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
                     vxTilingSobelNode(graph, images[1], images[2], images[3]),
-//                    vxFWriteImageNode(graph, images[2], "tiling_sobel_gradx_lena_512x512.pgm"),
-//                    vxFWriteImageNode(graph, images[3], "tiling_sobel_grady_lena_512x512.pgm"),
-                    vxTilingPhaseNode(graph, images[2], images[3], images[4]),
-                    vxFWriteImageNode(graph, images[4], "tiling_phase_512x512.pgm"),
+                    vxTilingMagnitudeNode(graph, images[2], images[3], images[4]),
+                    vxTilingThresholdNode(graph, images[4], threshold, images[5]),
+                    vxFWriteImageNode(graph, images[5], "tiling_threshold_lena_512x512.pgm"),
                 };
                 for (i = 0; i < dimof(nodes); i++)
                 {

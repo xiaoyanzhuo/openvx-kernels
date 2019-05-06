@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <VX/vx_khr_tiling.h>
+#include <math.h>
 
 /*! \file
  * \example vx_tiling_magnitude.c
@@ -47,11 +48,11 @@ void magnitude_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (x = 0; x < vxTileWidth(out, 0); x+=vxTileBlockWidth(out))
         {
-            vx_int32 grad[2] = {vxImagePixel(vx_int16, in0, 0, i, j, 0, 0) * vxImagePixel(vx_int16, in0, 0, i, j, 0, 0),
-                                vxImagePixel(vx_int16, in1, 0, i, j, 0, 0) * vxImagePixel(vx_int16, in1, 0, i, j, 0, 0)};
+            vx_float64 grad[2] = {(vx_float64)vxImagePixel(vx_int16, in0, 0, x, y, 0, 0) * vxImagePixel(vx_int16, in0, 0, x, y, 0, 0),
+                                (vx_float64)vxImagePixel(vx_int16, in1, 0, x, y, 0, 0) * vxImagePixel(vx_int16, in1, 0, x, y, 0, 0)};
             vx_float64 sum = grad[0] + grad[1];
-            vx_uint32 pixel = ((vx_int32)sqrt(sum))/4;
-            vxImagePixel(vx_uint8, out, 0, i, j, 0, 0) = (vx_uint8)(pixel > UINT8_MAX ? UINT8_MAX : pixel);
+            vx_uint32 pixel = (vx_int32)(sqrt(sum) + 0.5);
+            vxImagePixel(vx_int16, out, 0, x, y, 0, 0) = (vx_int16)(pixel > INT16_MAX ? INT16_MAX : pixel);
         }
     }
 }

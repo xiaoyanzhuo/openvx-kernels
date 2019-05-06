@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
                 vxCreateImageFromROI(images[0], &rect),       // 1:ROI input
                 vxCreateImage(context, img_w, img_h, VX_DF_IMAGE_U8), // 2:alpha
         };
-        vx_float32 a = 0.5f;
+        vx_float32 a = 0.3f;
         vx_scalar alpha = vxCreateScalar(context, VX_TYPE_FLOAT32, &a);
         status |= vxLoadKernels(context, "openvx-tiling");
         status |= vxLoadKernels(context, "openvx-debug");
