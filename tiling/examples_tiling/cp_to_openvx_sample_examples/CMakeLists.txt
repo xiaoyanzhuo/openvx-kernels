@@ -68,7 +68,7 @@ if (OPENVX_USE_TILING)
     # add a target named ${TARGET_NAME}
    # add_library (${TARGET_NAME_EXAMPLE_TILING} SHARED vx_tiling_add.c vx_tiling_alpha.c vx_tiling_gaussian.c vx_tiling_box.c vx_tiling_erode.c vx_tiling_dilate.c vx_tiling_ext.c)
 
-    add_library (${TARGET_NAME_EXAMPLE_TILING} SHARED vx_tiling_add.c vx_tiling_alpha.c vx_tiling_gaussian.c vx_tiling_box.c vx_tiling_erode.c vx_tiling_dilate.c vx_tiling_median.c vx_tiling_sobel.c vx_tiling_absdiff.c vx_tiling_sub.c vx_tiling_magnitude.c vx_tiling_phase.c vx_tiling_threshold.c vx_tiling_ext.c)
+    add_library (${TARGET_NAME_EXAMPLE_TILING} SHARED vx_tiling_add.c vx_tiling_alpha.c vx_tiling_gaussian.c vx_tiling_box.c vx_tiling_erode.c vx_tiling_dilate.c vx_tiling_median.c vx_tiling_sobel.c vx_tiling_absdiff.c vx_tiling_sub.c vx_tiling_magnitude.c vx_tiling_phase.c vx_tiling_threshold.c vx_tiling_accumulate_squared.c vx_tiling_accumulate.c vx_tiling_ext.c)
 
     target_link_libraries( ${TARGET_NAME_EXAMPLE_TILING} openvx )
 

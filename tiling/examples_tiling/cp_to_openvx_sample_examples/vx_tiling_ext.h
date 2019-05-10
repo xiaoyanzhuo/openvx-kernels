@@ -52,6 +52,10 @@ enum vx_tiling_kernels_e {
     VX_KERNEL_PHASE_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10B,
     /*! \brief a threshold kernel */
     VX_KERNEL_THRESHOLD_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10C,
+    /*! \brief a accumulate_squared kernel */
+    VX_KERNEL_ACCUMULATE_SQUARED_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10D,
+    /*! \brief a accumulate kernel */
+    VX_KERNEL_ACCUMULATE_TILING = VX_KERNEL_BASE(VX_ID_KHRONOS, VX_LIBRARY_KHR_BASE) + 0x10E,
 };
 
 #ifdef _VX_TILING_EXT_INTERNAL_
@@ -68,6 +72,8 @@ void sub_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_REST
 void magnitude_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 void phase_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 void threshold_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void accumulate_squared_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
+void accumulate_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT], void * VX_RESTRICT tile_memory, vx_size tile_memory_size);
 #endif
 
 #endif
