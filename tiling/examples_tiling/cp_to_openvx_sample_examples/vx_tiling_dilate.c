@@ -42,6 +42,7 @@ void dilate_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                       vx_size tile_memory_size)
 {
     vx_uint32 x, y;
+    vx_uint32 m, n;
     vx_tile_t *in = (vx_tile_t *)parameters[0];
     vx_tile_t *out = (vx_tile_t *)parameters[1];
 
@@ -54,19 +55,25 @@ void dilate_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (x = 0; x < vxTileWidth(out, 0); x+=vxTileBlockWidth(out))
         {
-            vx_int32 j, i;
-            //vx_uint32 min = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1);
-            vx_uint32 max = vxImagePixel(vx_uint8, in, 0, x, y, vxNeighborhoodLeft(in), vxNeighborhoodTop(in));
-            /* these loops can handle 3x3, 5x5, etc. since block size would be 1x1 */
-            for (j = vxNeighborhoodTop(in); j <= vxNeighborhoodBottom(in); j++)
+            for (n = 0u; n < vxTileBlockHeight(out); n++)
             {
-                for (i = vxNeighborhoodLeft(in); i <= vxNeighborhoodRight(in); i++)
-                {
-                    if (vxImagePixel(vx_uint8, in, 0, x, y, i, j) > max)
-                        max = vxImagePixel(vx_uint8, in, 0, x, y, i, j);
+                for (m = 0u; m < vxTileBlockWidth(out); m++)
+                {             
+                    vx_int32 j, i;
+                    //vx_uint32 min = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1);
+                    vx_uint32 max = vxImagePixel(vx_uint8, in, 0, x+m, y+n, vxNeighborhoodLeft(in), vxNeighborhoodTop(in));
+                    /* these loops can handle 3x3, 5x5, etc. since block size would be 1x1 */
+                    for (j = vxNeighborhoodTop(in); j <= vxNeighborhoodBottom(in); j++)
+                    {
+                        for (i = vxNeighborhoodLeft(in); i <= vxNeighborhoodRight(in); i++)
+                        {
+                            if (vxImagePixel(vx_uint8, in, 0, x+m, y+n, i, j) > max)
+                                max = vxImagePixel(vx_uint8, in, 0, x+m, y+n, i, j);
+                        }
+                    }
+                    vxImagePixel(vx_uint8, out, 0, x+m, y+n, 0, 0) = (vx_uint8)max;
                 }
             }
-            vxImagePixel(vx_uint8, out, 0, x, y, 0, 0) = (vx_uint8)max;
         }
     }
 }

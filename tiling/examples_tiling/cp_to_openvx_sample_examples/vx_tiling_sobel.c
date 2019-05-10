@@ -91,6 +91,7 @@ void sobel_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                       vx_size tile_memory_size)
 {
     vx_uint32 x, y;
+    vx_uint32 m, n;
     vx_tile_t *in = (vx_tile_t *)parameters[0];
     vx_tile_t *out0 = (vx_tile_t *)parameters[1];
     vx_tile_t *out1 = (vx_tile_t *)parameters[2];
@@ -117,33 +118,39 @@ void sobel_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (x = 0; x < vxTileWidth(out0, 0); x+=vxTileBlockWidth(out0))
         {
-            vx_int32 sum_x, sum_y;
-            sum_x = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1) * sobel_x[0][0] +
-                    vxImagePixel(vx_uint8, in, 0, x, y,  0, -1) * sobel_x[0][1] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, +1, -1) * sobel_x[0][2] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, -1,  0) * sobel_x[1][0] +
-                    vxImagePixel(vx_uint8, in, 0, x, y,  0,  0) * sobel_x[1][1] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, +1,  0) * sobel_x[1][2] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, -1, +1) * sobel_x[2][0] +
-                    vxImagePixel(vx_uint8, in, 0, x, y,  0, +1) * sobel_x[2][1] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, +1, +1) * sobel_x[2][2];
+            for (n = 0u; n < vxTileBlockHeight(out0); n++)
+            {
+                for (m = 0u; m < vxTileBlockWidth(out0); m++)
+                { 
+                    vx_int32 sum_x, sum_y;
+                    sum_x = vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, -1) * sobel_x[0][0] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, -1) * sobel_x[0][1] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, -1) * sobel_x[0][2] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1,  0) * sobel_x[1][0] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0,  0) * sobel_x[1][1] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1,  0) * sobel_x[1][2] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, +1) * sobel_x[2][0] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, +1) * sobel_x[2][1] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, +1) * sobel_x[2][2];
 
-            sum_y = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1) * sobel_y[0][0] +
-                    vxImagePixel(vx_uint8, in, 0, x, y,  0, -1) * sobel_y[0][1] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, +1, -1) * sobel_y[0][2] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, -1,  0) * sobel_y[1][0] +
-                    vxImagePixel(vx_uint8, in, 0, x, y,  0,  0) * sobel_y[1][1] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, +1,  0) * sobel_y[1][2] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, -1, +1) * sobel_y[2][0] +
-                    vxImagePixel(vx_uint8, in, 0, x, y,  0, +1) * sobel_y[2][1] +
-                    vxImagePixel(vx_uint8, in, 0, x, y, +1, +1) * sobel_y[2][2];
-            vx_int32 value_x = sum_x / div_x;
-            vx_int32 value_y = sum_y / div_y;
-            vxImagePixel(vx_int16, out0, 0, x, y, 0, 0) = vx_clamp_s16_i32(value_x);
-            vxImagePixel(vx_int16, out1, 0, x, y, 0, 0) = vx_clamp_s16_i32(value_y);
-            //printf("vx_int32/16 values: %d, %d\n", sum_x, vx_clamp_s16_i32(value_x));
-       //     vxImagePixel(vx_uint8, out0, 0, x, y, 0, 0) = vx_clamp_u8_i32(value_x);
-       //     vxImagePixel(vx_uint8, out1, 0, x, y, 0, 0) = vx_clamp_u8_i32(value_y);
+                    sum_y = vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, -1) * sobel_y[0][0] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, -1) * sobel_y[0][1] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, -1) * sobel_y[0][2] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1,  0) * sobel_y[1][0] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0,  0) * sobel_y[1][1] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1,  0) * sobel_y[1][2] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, +1) * sobel_y[2][0] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, +1) * sobel_y[2][1] +
+                            vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, +1) * sobel_y[2][2];
+                    vx_int32 value_x = sum_x / div_x;
+                    vx_int32 value_y = sum_y / div_y;
+                    vxImagePixel(vx_int16, out0, 0, x+m, y+n, 0, 0) = vx_clamp_s16_i32(value_x);
+                    vxImagePixel(vx_int16, out1, 0, x+m, y+n, 0, 0) = vx_clamp_s16_i32(value_y);
+                    //printf("vx_int32/16 values: %d, %d\n", sum_x, vx_clamp_s16_i32(value_x));
+               //     vxImagePixel(vx_uint8, out0, 0, x, y, 0, 0) = vx_clamp_u8_i32(value_x);
+               //     vxImagePixel(vx_uint8, out1, 0, x, y, 0, 0) = vx_clamp_u8_i32(value_y);
+                }
+            }
         }
     }
 }

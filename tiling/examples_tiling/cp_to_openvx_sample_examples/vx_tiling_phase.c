@@ -40,6 +40,7 @@ void phase_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                       vx_size tile_memory_size)
 {
     vx_uint32 x, y;
+    vx_uint32 m, n;
     vx_tile_t *in0 = (vx_tile_t *)parameters[0];
     vx_tile_t *in1 = (vx_tile_t *)parameters[1];
     vx_tile_t *out = (vx_tile_t *)parameters[2];
@@ -53,18 +54,24 @@ void phase_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (x = 0; x < vxTileWidth(out, 0); x+=vxTileBlockWidth(out))
         {
-            /* -M_PI to M_PI */
-            vx_float64 arct = atan2(vxImagePixel(vx_float64, in0, 0, x, y, 0, 0),vxImagePixel(vx_float64, in1, 0, x, y, 0, 0));
-            /* 0 - TAU */
-            vx_float64 norm = arct;
-            if (arct < 0.0f)
+            for (n = 0u; n < vxTileBlockHeight(out); n++)
             {
-                norm = VX_TAU + arct;
+                for (m = 0u; m < vxTileBlockWidth(out); m++)
+                {                    
+                    /* -M_PI to M_PI */
+                    vx_float64 arct = atan2(vxImagePixel(vx_float64, in0, 0, x+m, y+n, 0, 0),vxImagePixel(vx_float64, in1, 0, x+m, y+n, 0, 0));
+                    /* 0 - TAU */
+                    vx_float64 norm = arct;
+                    if (arct < 0.0f)
+                    {
+                        norm = VX_TAU + arct;
+                    }
+                    /* 0.0 - 1.0 */
+                    norm = norm / VX_TAU;
+                    /* 0 - 255 */
+                    vxImagePixel(vx_uint8, out, 0, x+m, y+n, 0, 0) = (vx_uint8)((vx_uint32)(norm * 256u + 0.5) & 0xFFu);
+                }
             }
-            /* 0.0 - 1.0 */
-            norm = norm / VX_TAU;
-            /* 0 - 255 */
-            vxImagePixel(vx_uint8, out, 0, x, y, 0, 0) = (vx_uint8)((vx_uint32)(norm * 256u + 0.5) & 0xFFu);
         }
     }
 }

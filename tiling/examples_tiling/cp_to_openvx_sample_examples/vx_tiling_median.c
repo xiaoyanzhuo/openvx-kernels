@@ -55,6 +55,7 @@ void median_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                       vx_size tile_memory_size)
 {
     vx_uint32 x, y;
+    vx_uint32 m, n;
     vx_tile_t *in = (vx_tile_t *)parameters[0];
     vx_tile_t *out = (vx_tile_t *)parameters[1];
 
@@ -67,37 +68,27 @@ void median_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (x = 0; x < vxTileWidth(out, 0); x+=vxTileBlockWidth(out))
         {
-            vx_int32 j, i;
-            vx_uint8 values[9];
-            vx_uint8 row_len, row_shift, col_shift, v_index, nitems;
-            nitems = sizeof(values)/sizeof(values[0]);
-            values[0] = vxImagePixel(vx_uint8, in, 0, x, y, -1, -1);
-            values[1] = vxImagePixel(vx_uint8, in, 0, x, y,  0, -1);
-            values[2] = vxImagePixel(vx_uint8, in, 0, x, y, +1, -1);
-            values[3] = vxImagePixel(vx_uint8, in, 0, x, y, -1,  0);
-            values[4] = vxImagePixel(vx_uint8, in, 0, x, y,  0,  0);
-            values[5] = vxImagePixel(vx_uint8, in, 0, x, y, +1,  0);
-            values[6] = vxImagePixel(vx_uint8, in, 0, x, y, -1, +1);
-            values[7] = vxImagePixel(vx_uint8, in, 0, x, y,  0, +1);
-            values[8] = vxImagePixel(vx_uint8, in, 0, x, y, +1, +1);
-
-/*
-            row_len = vxNeighborhoodRight(in) - vxNeighborhoodLeft(in) + 1;
-            row_shift = 0 - vxNeighborhoodLeft(in);
-            col_shift = 0 - vxNeighborhoodTop(in);
-*/
-            /* these loops can handle 3x3, 5x5, etc. since block size would be 1x1 */
-/*            for (j = vxNeighborhoodTop(in); j < vxNeighborhoodBottom(in); j++)
+            for (n = 0u; n < vxTileBlockHeight(out); n++)
             {
-                for (i = vxNeighborhoodLeft(in); i < vxNeighborhoodRight(in); i++)
+                for (m = 0u; m < vxTileBlockWidth(out); m++)
                 {
-                    v_index = (i + row_shift) + row_len * (j + col_shift);
-                    values[v_index]= vxImagePixel(vx_uint8, in, 0, x, y, i, j);
+                    vx_int32 j, i;
+                    vx_uint8 values[9];
+                    // vx_uint8 row_len, row_shift, col_shift, v_index, nitems;
+                    // nitems = sizeof(values)/sizeof(values[0]);
+                    values[0] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, -1);
+                    values[1] = vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, -1);
+                    values[2] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, -1);
+                    values[3] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1,  0);
+                    values[4] = vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0,  0);
+                    values[5] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1,  0);
+                    values[6] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, +1);
+                    values[7] = vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, +1);
+                    values[8] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, +1);
+                    qsort(values, nitems, sizeof(vx_uint8), vx_uint8_compare);
+                    vxImagePixel(vx_uint8, out, 0, x+m, y+n, 0, 0) = values[4];  /* pick the middle value */
                 }
             }
-*/
-            qsort(values, nitems, sizeof(vx_uint8), vx_uint8_compare);
-            vxImagePixel(vx_uint8, out, 0, x, y, 0, 0) = values[4];  /* pick the middle value */
         }
     }
 }

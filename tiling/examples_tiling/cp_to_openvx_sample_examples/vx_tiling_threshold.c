@@ -36,6 +36,7 @@ void threshold_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                         vx_size tile_memory_size)
 {
     vx_uint32 i,j;
+    vx_uint32 m,n;
     vx_tile_t *in = (vx_tile_t *)parameters[0];
     vx_uint8 *threshold = (vx_uint8 *)parameters[1];
     vx_tile_t *out = (vx_tile_t *)parameters[2];
@@ -44,11 +45,17 @@ void threshold_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (i = 0u; i < vxTileWidth(in, 0); i+=vxTileBlockWidth(in))
         {
-            vx_int16 pixel = vxImagePixel(vx_int16, in, 0, i, j, 0, 0);
-            if (pixel > (*threshold))
-                vxImagePixel(vx_uint8, out, 0, i, j, 0, 0) = 255;
-            else
-                vxImagePixel(vx_uint8, out, 0, i, j, 0, 0) = 0;
+            for (n = 0u; n < vxTileBlockHeight(in); n++)
+            {
+                for (m = 0u; m < vxTileBlockWidth(in); m++)
+                {
+                    vx_int16 pixel = vxImagePixel(vx_int16, in, 0, i+m, j+n, 0, 0);
+                    if (pixel > (*threshold))
+                        vxImagePixel(vx_uint8, out, 0, i+m, j+n, 0, 0) = 255;
+                    else
+                        vxImagePixel(vx_uint8, out, 0, i+m, j+n, 0, 0) = 0;
+                }
+            }    
         }
     }
 }

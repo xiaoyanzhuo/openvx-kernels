@@ -35,6 +35,7 @@ void magnitude_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                       vx_size tile_memory_size)
 {
     vx_uint32 x, y;
+    vx_uint32 m, n;
     vx_tile_t *in0 = (vx_tile_t *)parameters[0];
     vx_tile_t *in1 = (vx_tile_t *)parameters[1];
     vx_tile_t *out = (vx_tile_t *)parameters[2];
@@ -48,11 +49,17 @@ void magnitude_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (x = 0; x < vxTileWidth(out, 0); x+=vxTileBlockWidth(out))
         {
-            vx_float64 grad[2] = {(vx_float64)vxImagePixel(vx_int16, in0, 0, x, y, 0, 0) * vxImagePixel(vx_int16, in0, 0, x, y, 0, 0),
-                                (vx_float64)vxImagePixel(vx_int16, in1, 0, x, y, 0, 0) * vxImagePixel(vx_int16, in1, 0, x, y, 0, 0)};
-            vx_float64 sum = grad[0] + grad[1];
-            vx_uint32 pixel = (vx_int32)(sqrt(sum) + 0.5);
-            vxImagePixel(vx_int16, out, 0, x, y, 0, 0) = (vx_int16)(pixel > INT16_MAX ? INT16_MAX : pixel);
+            for (n = 0u; n < vxTileBlockHeight(out); n++)
+            {
+                for (m = 0u; m < vxTileBlockWidth(out); m++)
+                { 
+                    vx_float64 grad[2] = {(vx_float64)vxImagePixel(vx_int16, in0, 0, x+m, y+n, 0, 0) * vxImagePixel(vx_int16, in0, 0, x+m, y+n, 0, 0),
+                                        (vx_float64)vxImagePixel(vx_int16, in1, 0, x+m, y+n, 0, 0) * vxImagePixel(vx_int16, in1, 0, x+m, y+n, 0, 0)};
+                    vx_float64 sum = grad[0] + grad[1];
+                    vx_uint32 pixel = (vx_int32)(sqrt(sum) + 0.5);
+                    vxImagePixel(vx_int16, out, 0, x+m, y+n, 0, 0) = (vx_int16)(pixel > INT16_MAX ? INT16_MAX : pixel);
+                }
+            }
         }
     }
 }

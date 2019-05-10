@@ -38,6 +38,7 @@ void absdiff_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                       vx_size tile_memory_size)
 {
     vx_uint32 i,j;
+    vx_uint32 m,n;
     vx_uint8 pixel;
     vx_tile_t *in0 = (vx_tile_t *)parameters[0];
     vx_tile_t *in1 = (vx_tile_t *)parameters[1];
@@ -52,12 +53,18 @@ void absdiff_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (i = 0u; i < vxTileWidth(out,0); i+=vxTileBlockWidth(out))
         {
-            /* this math covers a 1x1 block and has no neighborhood */
-            if (vxImagePixel(vx_uint8, in0, 0, i, j, 0, 0) > vxImagePixel(vx_uint8, in1, 0, i, j, 0, 0))
-                pixel = vxImagePixel(vx_uint8, in0, 0, i, j, 0, 0) - vxImagePixel(vx_uint8, in1, 0, i, j, 0, 0);
-            else
-                pixel = vxImagePixel(vx_uint8, in1, 0, i, j, 0, 0) - vxImagePixel(vx_uint8, in0, 0, i, j, 0, 0);
-            vxImagePixel(vx_uint8, out, 0, i, j, 0, 0) = pixel;
+            for (n = 0u; n < vxTileBlockHeight(out); n++)
+            {
+                for (m = 0u; m < vxTileBlockWidth(out); m++)
+                {                    
+                    /* this math covers more than 1x1 block and has no neighborhood */
+                    if (vxImagePixel(vx_uint8, in0, 0, i+m, j+n, 0, 0) > vxImagePixel(vx_uint8, in1, 0, i+m, j+n, 0, 0))
+                        pixel = vxImagePixel(vx_uint8, in0, 0, i+m, j+n, 0, 0) - vxImagePixel(vx_uint8, in1, 0, i+m, j+n, 0, 0);
+                    else
+                        pixel = vxImagePixel(vx_uint8, in1, 0, i+m, j+n, 0, 0) - vxImagePixel(vx_uint8, in0, 0, i+m, j+n, 0, 0);
+                    vxImagePixel(vx_uint8, out, 0, i+m, j+n, 0, 0) = pixel;
+                }
+            }
         }
     }
 }

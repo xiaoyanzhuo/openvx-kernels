@@ -48,29 +48,29 @@ void gaussian_image_tiling_fast(void * VX_RESTRICT parameters[VX_RESTRICT],
     {
         for (x = 0; x < vxTileWidth(out, 0); x += vxTileBlockWidth(out))
         {
-	    for (n = 0u; n < vxTileBlockHeight(out); n++)
-	    {
-	        for (m = 0u; m < vxTileBlockWidth(out); m++)
-		{
-		    vx_uint32 sum = 0;
-		    /* this math covers a {-1,1},{-1,1} neighborhood and a block of 1x1.
-		     * an internal set of for loops could have been placed here instead.
-		     */
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, -1);
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, -1) << 1;
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, -1);
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1,  0) << 1;
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0,  0) << 2;
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1,  0) << 1;
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, +1);
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, +1) << 1;
-		    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, +1);
-		    sum >>= 4;
-		    if (sum > 255)
-		        sum = 255;
-		    vxImagePixel(vx_uint8, out, 0, x+m, y+n, 0, 0) = (vx_uint8)sum;
-		}
-	    }
+		    for (n = 0u; n < vxTileBlockHeight(out); n++)
+		    {
+		        for (m = 0u; m < vxTileBlockWidth(out); m++)
+		        {
+				    vx_uint32 sum = 0;
+				    /* this math covers a {-1,1},{-1,1} neighborhood and a block of 1x1.
+				     * an internal set of for loops could have been placed here instead.
+				     */
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, -1);
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, -1) << 1;
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, -1);
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1,  0) << 1;
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0,  0) << 2;
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1,  0) << 1;
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, +1);
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, +1) << 1;
+				    sum += vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, +1);
+				    sum >>= 4;
+				    if (sum > 255)
+				        sum = 255;
+				    vxImagePixel(vx_uint8, out, 0, x+m, y+n, 0, 0) = (vx_uint8)sum;
+				}
+			}
         }
     }
 }
