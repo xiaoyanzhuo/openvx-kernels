@@ -74,8 +74,8 @@ void median_image_tiling(void * VX_RESTRICT parameters[VX_RESTRICT],
                 {
                     vx_int32 j, i;
                     vx_uint8 values[9];
-                    // vx_uint8 row_len, row_shift, col_shift, v_index, nitems;
-                    // nitems = sizeof(values)/sizeof(values[0]);
+                    vx_uint8 nitems;
+                    nitems = sizeof(values)/sizeof(values[0]);
                     values[0] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, -1, -1);
                     values[1] = vxImagePixel(vx_uint8, in, 0, x+m, y+n,  0, -1);
                     values[2] = vxImagePixel(vx_uint8, in, 0, x+m, y+n, +1, -1);
