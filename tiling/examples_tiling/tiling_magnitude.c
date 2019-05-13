@@ -84,8 +84,6 @@ int main(int argc, char *argv[])
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
                     vxTilingSobelNode(graph, images[1], images[2], images[3]),
-//                    vxFWriteImageNode(graph, images[2], "tiling_sobel_gradx_lena_512x512.pgm"),
-//                    vxFWriteImageNode(graph, images[3], "tiling_sobel_grady_lena_512x512.pgm"),
                     vxTilingMagnitudeNode(graph, images[2], images[3], images[4]),
                     vxFWriteImageNode(graph, images[4], "tiling_magnitude_512x512.pgm"),
                 };

@@ -40,8 +40,6 @@ int main(int argc, char *argv[])
                 vx_node nodes[] = {
                     vxFReadImageNode(graph, "lena_512x512.pgm", images[1]),
                     vxSobel3x3Node(graph, images[1], images[2], images[3]),
-                    // vxFWriteImageNode(graph, images[2], "non_tiling_sobel_gradx_lena_512x512.pgm"),
-                    // vxFWriteImageNode(graph, images[3], "non_tiling_sobel_grady_lena_512x512.pgm"),
                     vxPhaseNode(graph, images[2], images[3], images[4]),
                     vxFWriteImageNode(graph, images[4], "non_tiling_phase_lena_512x512.pgm"),
                 };
