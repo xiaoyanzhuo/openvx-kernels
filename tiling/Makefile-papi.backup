@@ -1,0 +1,30 @@
+CC = gcc
+
+SRC_DIR=examples_tiling_papi
+BIN_DIR=bin_tiling_papi
+
+#CFLAGS += -I$(PULP_SDK_HOME)/install/include -D__OPENRISC__ -D_LITTLE_ENDIAN_ -Wno-incompatible-pointer-types
+LDFLAGS += -lopenvx -lopenvx-helper -lvx_debug -lopenvx-debug_k-lib -lopenvx-debug-lib -lopenvx-extras-lib -lm -Wl,--no-whole-archive
+
+all: $(SRC_DIR)/non_tiling_alpha.c
+				mkdir -p $(BIN_DIR)
+				$(CC) -o $(BIN_DIR)/non_tiling_alpha  $(SRC_DIR)/non_tiling_alpha.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_gaussian  $(SRC_DIR)/non_tiling_gaussian.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi  $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_box  $(SRC_DIR)/non_tiling_box.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi  $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_add  $(SRC_DIR)/non_tiling_add.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi  $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_erode  $(SRC_DIR)/non_tiling_erode.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi  $(LDFLAGS)                                                
+				$(CC) -o $(BIN_DIR)/non_tiling_dilate  $(SRC_DIR)/non_tiling_dilate.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_median  $(SRC_DIR)/non_tiling_median.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_sobel  $(SRC_DIR)/non_tiling_sobel.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_absdiff  $(SRC_DIR)/non_tiling_absdiff.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_sub  $(SRC_DIR)/non_tiling_sub.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_magnitude  $(SRC_DIR)/non_tiling_magnitude.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_phase  $(SRC_DIR)/non_tiling_phase.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_threshold  $(SRC_DIR)/non_tiling_threshold.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_accumulateSquare  $(SRC_DIR)/non_tiling_accumulateSquare.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+				$(CC) -o $(BIN_DIR)/non_tiling_accumulate  $(SRC_DIR)/non_tiling_accumulate.c  $(CFLAGS) -I${PAPI_DIR}/include -L${PAPI_DIR}/lib -lpapi $(LDFLAGS)
+
+.PHONY: clean
+
+clean:
+		rm -rf $(BIN_DIR)/*
